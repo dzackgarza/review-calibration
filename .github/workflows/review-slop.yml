@@ -21,4 +21,4 @@ jobs:
       advisory: true
       context_archive: review-packet.tar
       delivery: issues
-      parent_issue: 1
+      parent_issue: 8
