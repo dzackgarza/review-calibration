@@ -9,6 +9,11 @@ test-ci:
 score artifact:
     python3 src/score.py "{{artifact}}"
 
+# Normalize CI metadata JSON to full artifact shape, then score.
+score-metadata metadata:
+    python3 scripts/normalize_metadata.py "{{metadata}}" -o /tmp/cal-normalized.json
+    python3 src/score.py /tmp/cal-normalized.json
+
 # Assemble review-packet.tar for advisory review workflows.
 # GROUND_TRUTH.md and SCORING.md are NEVER included.
 review-packet:

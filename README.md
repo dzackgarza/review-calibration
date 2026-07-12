@@ -1,86 +1,69 @@
-# Research review calibration
+# Review calibration
 
-Frozen simulacrum of `dzackgarza/research` lattice-spike work, used to **hill-climb LLM review quality** before trusting advisory runs on the live monorepo.
+Frozen simulacrum of `dzackgarza/research` lattice-spike work. Used to
+**hill-climb LLM review quality** before trusting advisory runs on the live
+monorepo.
 
-This is a **separate repository** (submodule of research at `review-calibration/`). It looks like a small spike checkout to the reviewer — not an eval harness — but experimenters here know exactly which violations were planted and at what tier.
+- **Repo:** [github.com/dzackgarza/review-calibration](https://github.com/dzackgarza/review-calibration)
+- **Submodule of research:** `review-calibration/`
+- **Performance ledger (discussion):** [issue #19](https://github.com/dzackgarza/review-calibration/issues/19) — append scores per run
+- **Finding grouping:** [issue #8](https://github.com/dzackgarza/review-calibration/issues/8)
+- **Program doc:** [HILL_CLIMB.md](./HILL_CLIMB.md)
+
+The reviewer sees a small spike checkout — not an eval harness. Experimenters
+hold the answer key in `GROUND_TRUTH.md` (never in `review-packet.tar`).
 
 ## What lives here
 
 | Path | Audience | In `review-packet.tar`? |
-| --- | --- | --- |
-| `lattice_spike_slice/` | Reviewer (the "repo") | Indirectly (code under review) |
-| `lattice_spike_slice/vault/` | Reviewer (context) | Yes (`vault/` in packet) |
+|------|----------|-------------------------|
+| `lattice_spike_slice/` | Reviewer | Code under review |
+| `lattice_spike_slice/vault/` | Reviewer | Yes |
 | `policies/STYLE.md` | Reviewer | Yes |
-| `GROUND_TRUTH.md` | **Experimenters only** | **Never** |
-| `SCORING.md` | Experimenters | **Never** |
-| `src/score.py` | Experimenters / CI | **Never** |
+| `GROUND_TRUTH.md` | Experimenters | **Never** |
+| `HILL_CLIMB.md`, `SCORING.md` | Experimenters | **Never** |
+| `src/score.py`, `scripts/` | Experimenters | **Never** |
 
-The advisory review workflows (`.github/workflows/review-*.yml`) run against **this** repo exactly like production runs against research: same `ai-review-ci` reusable workflow, same packet mechanism, findings published to **this repo's issues ledger** (not research's).
+Advisory workflows (`.github/workflows/review-*.yml`) use the same
+`ai-review-ci` reusable workflow as research; findings publish to **this
+repo's issues ledger**.
 
-## Planted violation design
-
-`GROUND_TRUTH.md` lists every planted item with:
-
-- **tier** — `structural` (high value), `decoy` (tempting low-hanging fruit), `noise` (should not be filed — duplicates, xfail markers)
-- **category** — maps to expected reviewer finding type
-- **why** — what capability we're testing (independent discovery vs trap-replay vs duplicate-of-tracked-gap)
-
-The slice deliberately mixes:
-
-1. **Structural** — morphism placement, ambient-basis bypass, wrong root definition, invented vocabulary (the failures research transcripts keep surfacing but the first live review run missed).
-2. **Decoys** — notebook `✓` prints, bare `_repr_`, axiom-absence blocks (tempting because they're in the frozen vault traps).
-3. **Noise** — strict-xfail rows that cite an open fixture issue (tests whether the reviewer re-files known gaps).
-
-## Experiment workflow
-
-1. Edit prompt / packet declaration / permissions upstream or in `just review-packet`.
-
-2. `just review-packet` → commit `review-packet.tar` if changed.
-
-3. Dispatch `General Review` / `Slop Review` (or push to `main`).
-
-4. Download `.review-report-artifact.json` from the run (or read published issues).
-
-5. Score against ground truth:
-
-   ```bash
-   just score /path/to/.review-report-artifact.json
-   ```
-
-6. Open an **experiment issue** in this repo (template below) recording: model, infra ref, packet hash, precision/recall by tier, false positives, and qualitative notes.
-
-Hill-climb on precision@structural and recall@structural before changing the production packet on `dzackgarza/research`.
-
-## Submodule contract (research repo)
-
-Research tracks this repo as a submodule and does **not** run advisory reviews against itself for calibration.
-Instead:
+## Quick start
 
 ```bash
-# From research root — refresh packet in the submodule
-just -f review-calibration/justfile review-packet
+# Score an artifact (or metadata JSON via normalize script)
+just score /path/to/.review-report-artifact.json
 
-# Dispatch a calibration run (after submodule repo is on GitHub)
-gh workflow run "General Review" --repo dzackgarza/research-review-calibration
+# Rebuild packet after editing justfile declaration
+just review-packet
+
+# Dispatch calibration review
+gh workflow run "General Review" --repo dzackgarza/review-calibration
 ```
 
-Research's role is pointer + documentation; all experiment issues and run history live **here**.
-
-## Creating the GitHub repo
-
-This directory is the repo root.
-One-time setup:
+From **research** root:
 
 ```bash
-cd review-calibration
-git init
-gh repo create dzackgarza/research-review-calibration --private --source=. --remote=origin
-git add -A && git commit -m "init: review calibration fixture and scoring harness"
-git push -u origin main
+just review-calibration-packet
+just review-calibration-general
+just review-calibration-score /path/to/artifact.json
 ```
 
-Then from research:
+## Planted violations
 
-```bash
-git submodule add git@github.com:dzackgarza/research-review-calibration.git review-calibration
-```
+See `GROUND_TRUTH.md`: **structural** (must find), **decoy** (trap-gaming
+detector), **noise** (must not file). Phase 0 baseline slice is documented
+in [HILL_CLIMB.md](./HILL_CLIMB.md).
+
+## Hill-climb goal
+
+Increase fixture difficulty and tighten pass bars until reviews reliably:
+
+1. Find substantive mathematical / architectural defects
+2. Surface pervasive patterns, not isolated nits
+3. Enforce custom style (STYLE.md) where it matters
+4. Identify slop (proof-laundering, invented vocabulary, API-reference notebooks)
+5. Respect ledger hygiene (no duplicate gap filing)
+
+Only then port packet/prompt learnings to research's production
+`review-packet.tar`.
