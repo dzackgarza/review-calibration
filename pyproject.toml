@@ -1,0 +1,17 @@
+[project]
+name = "research-review-calibration"
+version = "0.1.1"
+requires-python = ">=3.14"
+
+[dependency-groups]
+dev = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+# The scorer is the only importable first-party code; the fixture trees
+# (lattice_spike_slice, policies) must not be auto-discovered.
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["score"]

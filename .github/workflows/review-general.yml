@@ -1,0 +1,25 @@
+# Advisory general review — calibration repo (issues ledger).
+# Parent issue: create a grouping issue in this repo, set parent_issue below.
+name: General Review
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  general:
+    uses: dzackgarza/ai-review-ci/.github/workflows/_review.yml@main
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+      pull-requests: write
+      issues: write
+    with:
+      report_type: general
+      scope: repo
+      advisory: true
+      context_archive: review-packet.tar
+      delivery: issues
+      parent_issue: 1
