@@ -1,8 +1,7 @@
 # Review calibration
 
-Frozen simulacrum of `dzackgarza/research` lattice-spike work. Used to
-**hill-climb LLM review quality** before trusting advisory runs on the live
-monorepo.
+Frozen simulacrum of `dzackgarza/research` lattice-spike work.
+Used to **hill-climb LLM review quality** before trusting advisory runs on the live monorepo.
 
 - **Repo:** [github.com/dzackgarza/review-calibration](https://github.com/dzackgarza/review-calibration)
 - **Submodule of research:** `review-calibration/`
@@ -10,13 +9,13 @@ monorepo.
 - **Finding grouping:** [issue #8](https://github.com/dzackgarza/review-calibration/issues/8)
 - **Program doc:** [HILL_CLIMB.md](./HILL_CLIMB.md)
 
-The reviewer sees a small spike checkout — not an eval harness. Experimenters
-hold the answer key in `GROUND_TRUTH.md` (never in `review-packet.tar`).
+The reviewer sees a small spike checkout — not an eval harness.
+Experimenters hold the answer key in `GROUND_TRUTH.md` (never in `review-packet.tar`).
 
 ## What lives here
 
 | Path | Audience | In `review-packet.tar`? |
-|------|----------|-------------------------|
+| --- | --- | --- |
 | `lattice_spike_slice/` | Reviewer | Code under review |
 | `lattice_spike_slice/vault/` | Reviewer | Yes |
 | `policies/STYLE.md` | Reviewer | Yes |
@@ -24,9 +23,7 @@ hold the answer key in `GROUND_TRUTH.md` (never in `review-packet.tar`).
 | `HILL_CLIMB.md`, `SCORING.md` | Experimenters | **Never** |
 | `src/score.py`, `scripts/` | Experimenters | **Never** |
 
-Advisory workflows (`.github/workflows/review-*.yml`) use the same
-`ai-review-ci` reusable workflow as research; findings publish to **this
-repo's issues ledger**.
+Advisory workflows (`.github/workflows/review-*.yml`) use the same `ai-review-ci` reusable workflow as research; findings publish to **this repo's issues ledger**.
 
 ## Quick start
 
@@ -51,9 +48,8 @@ just review-calibration-score /path/to/artifact.json
 
 ## Planted violations
 
-See `GROUND_TRUTH.md`: **structural** (must find), **decoy** (trap-gaming
-detector), **noise** (must not file). Phase 0 baseline slice is documented
-in [HILL_CLIMB.md](./HILL_CLIMB.md).
+See `GROUND_TRUTH.md`: **structural** (must find), **decoy** (trap-gaming detector), **noise** (must not file).
+Phase 0 baseline slice is documented in [HILL_CLIMB.md](./HILL_CLIMB.md).
 
 ## Hill-climb goal
 
@@ -65,5 +61,4 @@ Increase fixture difficulty and tighten pass bars until reviews reliably:
 4. Identify slop (proof-laundering, invented vocabulary, API-reference notebooks)
 5. Respect ledger hygiene (no duplicate gap filing)
 
-Only then port packet/prompt learnings to research's production
-`review-packet.tar`.
+Only then port packet/prompt learnings to research's production `review-packet.tar`.

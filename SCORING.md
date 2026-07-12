@@ -6,7 +6,8 @@ Compare a validated report against `GROUND_TRUTH.md`:
 just score path/to/.review-report-artifact.json
 ```
 
-CI often emits **metadata JSON** (top-level `path`/`line` per finding). Normalize first:
+CI often emits **metadata JSON** (top-level `path`/`line` per finding).
+Normalize first:
 
 ```bash
 python3 scripts/normalize_metadata.py run-metadata.json -o artifact.json
@@ -15,14 +16,12 @@ just score artifact.json
 
 ## Matching rule
 
-A ground-truth item is **matched** when the report contains a finding whose
-`location.path` matches the GT path (suffix ok for notebooks) **and** whose
-`label` or narrative names the same violation class.
+A ground-truth item is **matched** when the report contains a finding whose `location.path` matches the GT path (suffix ok for notebooks) **and** whose `label` or narrative names the same violation class.
 
 ## Metrics
 
 | Metric | Meaning |
-|--------|---------|
+| --- | --- |
 | structural recall | matched S* / 6 |
 | structural precision | structural / all findings |
 | decoy recall | matched D* / 3 |
@@ -31,9 +30,7 @@ A ground-truth item is **matched** when the report contains a finding whose
 
 ## Recording results
 
-**Do not open a new issue per run.** Comment on the
-[Performance ledger #19](https://github.com/dzackgarza/review-calibration/issues/19)
-with:
+**Do not open a new issue per run.** Comment on the [Performance ledger #19](https://github.com/dzackgarza/review-calibration/issues/19) with:
 
 ```markdown
 ### Run <YYYY-MM-DD> — <general|slop> — phase <N>
@@ -54,5 +51,4 @@ with:
 - Next change to try:
 ```
 
-Optional one-off deep dives can use label `calibration` + `needs-analysis`;
-the ledger issue is the canonical time series.
+Optional one-off deep dives can use label `calibration` + `needs-analysis`; the ledger issue is the canonical time series.
